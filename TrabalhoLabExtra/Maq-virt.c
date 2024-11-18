@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Funções para extrair campos das instruções
+
 static inline uint8_t extract_op(uint32_t inst) { return (inst >> 26) & 0x3F; }
 static inline uint8_t extract_rs(uint32_t inst) { return (inst >> 21) & 0x1F; }
 static inline uint8_t extract_rt(uint32_t inst) { return (inst >> 16) & 0x1F; }
@@ -60,7 +60,7 @@ void step(vm_t* vm) {
         printf("ADDIU: $%d = $%d + %d -> %d\n", rt, rs, imm, regs[rt]);
     } break;
 
-    case 0x00: { // Instruções do tipo R (SUBU)
+    case 0x00: { //(SUBU)
         uint8_t funct = extract_funct(inst);
         if (funct == 0x23) { // SUBU
             uint8_t rs = extract_rs(inst);
@@ -88,7 +88,7 @@ void step(vm_t* vm) {
         int16_t offset = extract_imm(inst);
         printf("BNE: Offset extraído = %d\n", offset); // Linha de depuração
         if (regs[rs] != regs[rt]) {
-            vm->pc += offset * 4; // Ajustando o PC com o offset
+            vm->pc += offset * 4; 
             printf("BNE: $%d != $%d, jump para 0x%08X\n", rs, rt, vm->pc);
         } else {
             printf("BNE: $%d == $%d, condição satisfeita. $t0 atingiu zero.\n", rs, rt);
@@ -109,9 +109,9 @@ int main() {
     uint8_t program[] = {
         0x24, 0x08, 0xFE, 0xC0, // addiu $t0, $zero, -320
         0x24, 0x09, 0xFF, 0xB0, // addiu $t1, $zero, -80
-        0x01, 0x09, 0x40, 0x23, // subu $t0, $t0, $t1 (Codificação Corrigida)
+        0x01, 0x09, 0x40, 0x23, // subu $t0, $t0, $t1 
         0xAC, 0x08, 0x00, 0x00, // sw $t0, 0($zero)
-        0x15, 0x00, 0xFF, 0xFD  // bne $t0, $zero, label (Deslocamento Corrigido)
+        0x15, 0x00, 0xFF, 0xFD  // bne $t0, $zero, label 
     };
 
     mem_t mem = { .text = program };
@@ -125,7 +125,7 @@ int main() {
     printf("Início da simulação:\n");
     printf("-------------------------\n");
 
-    // Executar até 10 passos ou até que $t0 seja zero
+   
     for (i = 0; i < 12; ++i) {
         printf("Passo %d:\n", i + 1);
         step(&vm);
